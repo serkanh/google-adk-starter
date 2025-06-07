@@ -42,7 +42,7 @@ Edit `agents/my_agent/agent.py` to define your agent:
 def create_my_agent() -> Agent:
     return Agent(
         name="my_awesome_agent",  # Your agent's name
-        model=LiteLlm(model="gpt-4"),  # Your preferred model
+        model="gemini-2.0-flash"  # Your preferred model
         description="An AI that helps with...",  # What it does
         instruction="""You are an expert in...
 
@@ -69,8 +69,8 @@ adk web --agent agents.my_agent.agent:root_agent
 
 ### 4. Access Your Agent
 
-- **Web UI**: http://localhost:8000
-- **API**: http://localhost:8001
+- **Web UI**: <http://localhost:8000>
+- **API**: <http://localhost:8001>
 - **Database**: localhost:5432
 
 ## 📁 Project Structure
@@ -196,6 +196,7 @@ environment:
 ### Session Persistence
 
 Sessions are automatically managed with PostgreSQL:
+
 - Conversation history is preserved
 - User preferences are maintained
 - Automatic fallback to in-memory if DB fails
@@ -237,6 +238,7 @@ weather_tool = Tool(
 ### Adding Dependencies
 
 1. Add to `agents/my_agent/requirements.txt`:
+
    ```
    requests>=2.31.0
    beautifulsoup4>=4.12.0
@@ -306,6 +308,7 @@ gcloud run deploy my-agent \
 ### Environment Variables
 
 Production `.env` example:
+
 ```bash
 # API Keys
 OPENAI_API_KEY=sk-prod-...

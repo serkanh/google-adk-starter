@@ -63,18 +63,10 @@ session_manager = SessionManager()
 
 
 def create_my_agent() -> Agent:
-    """Create and configure your agent.
-
-    TODO: Customize this function to define your agent's:
-    - Name and description
-    - Model (GPT-4, Gemini, Claude, etc.)
-    - Instructions and personality
-    - Tools and capabilities
-    - Sub-agents if needed
-    """
+    """Create and configure your agent."""
     return Agent(
         name="my_agent",
-        model="gemini-2.0-flash",  # TODO: Configure your preferred model
+        model="gemini-2.0-flash",  # Using Google Gemini
         description="A helpful AI assistant",  # TODO: Add your agent's description
         instruction="""You are a helpful AI assistant.
 
@@ -92,16 +84,11 @@ def create_my_agent() -> Agent:
     )
 
 
-async def get_root_agent() -> Agent:
-    """Get the root agent instance."""
-    return create_my_agent()
-
-
 async def get_runner() -> Runner:
     """Initialize the ADK runner with session management."""
     logger.info("Initializing My Agent...")
 
-    agent = await get_root_agent()
+    agent = create_my_agent()  # Get the actual agent instance
     session_id = await session_manager.get_or_create_session()
 
     runner = Runner(
@@ -114,6 +101,6 @@ async def get_runner() -> Runner:
     return runner
 
 
-# Expose for ADK CLI
-root_agent = get_root_agent()
-runner = get_runner
+# Expose for ADK CLI - CORRECT VERSION
+root_agent = create_my_agent()  # Call the function to create the Agent instance
+runner = get_runner  # Function reference for the runner
