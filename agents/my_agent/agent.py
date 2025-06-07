@@ -74,7 +74,7 @@ def create_my_agent() -> Agent:
     """
     return Agent(
         name="my_agent",
-        model=LiteLlm(model="gpt-4"),  # TODO: Configure your preferred model
+        model="gemini-2.0-flash",  # TODO: Configure your preferred model
         description="A helpful AI assistant",  # TODO: Add your agent's description
         instruction="""You are a helpful AI assistant.
 
