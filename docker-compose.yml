@@ -1,0 +1,67 @@
+version: '3.8'
+
+services:
+  agent-web:
+    build:
+      context: .
+      dockerfile: agents/my_agent/Dockerfile
+    image: my-agent:latest
+    container_name: my-agent-web
+    restart: unless-stopped
+    ports:
+      - "8000:8000"  # Expose the web interface
+    environment:
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY}  # Set from environment variable
+      - OPENAI_API_KEY=${OPENAI_API_KEY}  # For GPT-4 or other OpenAI models
+      - PYTHONPATH=/app
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_NAME=agent_db
+      - DB_USER=postgres
+      - DB_PASSWORD=${POSTGRES_PASSWORD:-postgres}
+    volumes:
+      - ./agents:/app/  # Mount the entire project directory
+    # session db url parameter is necessary for web interface to write session data to the database
+    command: ["adk", "web", "--session_db_url=postgresql://postgres:postgres@postgres:5432/agent_db", "--host", "0.0.0.0"]
+    depends_on:
+      - postgres
+
+  agent-api:
+    build:
+      context: .
+      dockerfile: agents/my_agent/Dockerfile
+    image: my-agent:latest
+    container_name: my-agent-api
+    restart: unless-stopped
+    ports:
+      - "8001:8000"  # Expose the API
+    environment:
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - PYTHONPATH=/app
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_NAME=agent_db
+      - DB_USER=postgres
+      - DB_PASSWORD=${POSTGRES_PASSWORD:-postgres}
+      - LOG_LEVEL=INFO
+    volumes:
+      - ./agents:/app/
+    command: ["adk", "api_server", "--session_db_url=postgresql://postgres:postgres@postgres:5432/agent_db", "--host", "0.0.0.0"]
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:17
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-postgres}
+      - POSTGRES_DB=agent_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
